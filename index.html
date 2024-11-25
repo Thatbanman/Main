@@ -31,9 +31,20 @@
         </div>
     </div>
     <script>
-        const ownerAccount = { username: "MrScammable", password: "Mrhbhthtrhgyy#)*46" };
+        // Hashed credentials for the owner (hashed with SHA-256).
+        const ownerUsername = "MrScammable";
+        const ownerPasswordHash = "f6c7c3c5e2f594d4a5675e206b7a5bdf6dc82845f6801c59a771327ee23a3c43"; // SHA-256 of "Mrhbhthtrhgyy#)*46"
 
-        function handleSignIn(event) {
+        async function hashString(input) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(input);
+            const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+            return Array.from(new Uint8Array(hashBuffer))
+                .map((b) => b.toString(16).padStart(2, "0"))
+                .join("");
+        }
+
+        async function handleSignIn(event) {
             event.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
@@ -41,11 +52,13 @@
 
             const savedAccounts = JSON.parse(localStorage.getItem('accounts')) || {};
 
-            if (username === ownerAccount.username && password === ownerAccount.password) {
+            const hashedPassword = await hashString(password);
+
+            if (username === ownerUsername && hashedPassword === ownerPasswordHash) {
                 localStorage.setItem('isOwner', 'true');
                 alert("Welcome, Owner!");
                 window.location.href = "owner_home.html";
-            } else if (savedAccounts[username] === password) {
+            } else if (savedAccounts[username] === hashedPassword) {
                 localStorage.setItem('isOwner', 'false');
                 alert("Welcome!");
                 window.location.href = "normal_home.html";
