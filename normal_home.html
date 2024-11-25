@@ -1,1 +1,17 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Normal Home</title>
+</head>
+<body>
+    <h1>Hi</h1>
+    <script>
+        if (!localStorage.getItem('isOwner') || localStorage.getItem('isOwner') === 'true') {
+            alert("You are not authorized to access this page.");
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>
